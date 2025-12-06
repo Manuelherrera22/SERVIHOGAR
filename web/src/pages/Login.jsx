@@ -17,6 +17,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
 import { styled } from '@mui/material/styles';
+import BackendStatus from '../components/BackendStatus';
 
 const GradientBox = styled(Box)(({ theme }) => ({
   minHeight: '100vh',
@@ -99,6 +100,8 @@ export default function Login() {
               Panel de Administración Profesional
             </Typography>
           </LogoBox>
+
+          <BackendStatus />
 
           {error && (
             <Alert severity="error" sx={{ mb: 2, borderRadius: 2 }}>
