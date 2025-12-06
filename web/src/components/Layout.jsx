@@ -38,6 +38,10 @@ const StyledDrawer = styled(Drawer)(({ theme }) => ({
   '& .MuiDrawer-paper': {
     borderRight: '1px solid rgba(0,0,0,0.08)',
     boxShadow: '2px 0 10px rgba(0,0,0,0.05)',
+    [theme.breakpoints.down('sm')]: {
+      width: '85%',
+      maxWidth: 320,
+    },
   },
 }));
 
@@ -226,7 +230,11 @@ export default function Layout() {
           }}
           sx={{
             display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth }
+            '& .MuiDrawer-paper': { 
+              boxSizing: 'border-box', 
+              width: { xs: '85%', sm: drawerWidth },
+              maxWidth: 320
+            }
           }}
         >
           {drawer}
@@ -251,10 +259,12 @@ export default function Layout() {
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
+          p: { xs: 1.5, sm: 2, md: 3 },
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           backgroundColor: '#f5f7fa',
-          minHeight: '100vh'
+          minHeight: '100vh',
+          maxWidth: '100%',
+          overflowX: 'hidden'
         }}
       >
         <Toolbar />

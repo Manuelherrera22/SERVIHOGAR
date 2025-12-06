@@ -12,7 +12,8 @@ import {
   Toolbar,
   IconButton,
   useTheme,
-  useMediaQuery
+  useMediaQuery,
+  Stack
 } from '@mui/material';
 import {
   Home as HomeIcon,
@@ -23,14 +24,18 @@ import {
   PhoneAndroid as PhoneIcon,
   Apple as AppleIcon,
   Download as DownloadIcon,
-  ArrowForward as ArrowForwardIcon
+  ArrowForward as ArrowForwardIcon,
+  Menu as MenuIcon
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 
 const GradientBox = styled(Box)(({ theme }) => ({
   background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
   color: 'white',
-  padding: theme.spacing(8, 0),
+  padding: theme.spacing(6, 0),
+  [theme.breakpoints.up('md')]: {
+    padding: theme.spacing(12, 0),
+  },
   position: 'relative',
   overflow: 'hidden',
   '&::before': {
@@ -48,12 +53,17 @@ const GradientBox = styled(Box)(({ theme }) => ({
 const FeatureCard = styled(Card)(({ theme }) => ({
   height: '100%',
   padding: theme.spacing(3),
-  borderRadius: 16,
-  transition: 'all 0.3s ease',
+  borderRadius: 20,
+  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
   border: '1px solid rgba(0,0,0,0.08)',
+  background: 'white',
+  [theme.breakpoints.down('sm')]: {
+    padding: theme.spacing(2.5),
+  },
   '&:hover': {
-    transform: 'translateY(-8px)',
-    boxShadow: '0 12px 24px rgba(0,0,0,0.15)',
+    transform: 'translateY(-12px) scale(1.02)',
+    boxShadow: '0 20px 40px rgba(102, 126, 234, 0.2)',
+    borderColor: '#667eea',
   },
 }));
 
@@ -63,33 +73,45 @@ const DownloadButton = styled(Button)(({ theme }) => ({
   textTransform: 'none',
   fontSize: '1rem',
   fontWeight: 600,
-  minWidth: 200,
+  minWidth: 180,
+  [theme.breakpoints.down('sm')]: {
+    minWidth: '100%',
+    margin: theme.spacing(0.5, 0),
+  },
   margin: theme.spacing(1),
+}));
+
+const StyledAppBar = styled(AppBar)(({ theme }) => ({
+  background: 'white',
+  boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+  borderBottom: '1px solid rgba(0,0,0,0.08)',
 }));
 
 export default function Landing() {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
   const features = [
     {
-      icon: <BuildIcon sx={{ fontSize: 48, color: '#667eea' }} />,
+      icon: <BuildIcon sx={{ fontSize: { xs: 40, md: 48 }, color: '#667eea' }} />,
       title: 'Servicios Confiables',
       description: 'Conecta con técnicos verificados y profesionales para todos tus servicios del hogar.'
     },
     {
-      icon: <SecurityIcon sx={{ fontSize: 48, color: '#667eea' }} />,
+      icon: <SecurityIcon sx={{ fontSize: { xs: 40, md: 48 }, color: '#667eea' }} />,
       title: '100% Seguro',
       description: 'Pagos seguros y transparentes. Técnicos verificados con calificaciones reales.'
     },
     {
-      icon: <PaymentIcon sx={{ fontSize: 48, color: '#667eea' }} />,
+      icon: <PaymentIcon sx={{ fontSize: { xs: 40, md: 48 }, color: '#667eea' }} />,
       title: 'Pago Fácil',
       description: 'Paga directamente desde la app. Sin complicaciones, sin efectivo.'
     },
     {
-      icon: <StarIcon sx={{ fontSize: 48, color: '#667eea' }} />,
+      icon: <StarIcon sx={{ fontSize: { xs: 40, md: 48 }, color: '#667eea' }} />,
       title: 'Calificaciones',
       description: 'Sistema de reseñas y calificaciones para garantizar la mejor experiencia.'
     }
@@ -97,10 +119,8 @@ export default function Landing() {
 
   const handleDownload = (platform) => {
     if (platform === 'android') {
-      // Aquí iría el link al APK o Google Play Store
       window.open('https://play.google.com/store/apps/details?id=com.servihome.app', '_blank');
     } else if (platform === 'ios') {
-      // Aquí iría el link al App Store
       window.open('https://apps.apple.com/app/servihome/id123456789', '_blank');
     }
   };
@@ -125,45 +145,99 @@ export default function Landing() {
   };
 
   return (
-    <Box>
-      <AppBar position="static" sx={{ background: 'white', boxShadow: 'none', borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
-        <Toolbar>
-          <HomeIcon sx={{ color: '#667eea', mr: 2, fontSize: 32 }} />
-          <Typography variant="h6" sx={{ flexGrow: 1, color: '#333', fontWeight: 700 }}>
-            ServiHome
-          </Typography>
-          <Button
-            variant="outlined"
-            onClick={() => navigate('/login')}
-            sx={{ mr: 2, borderRadius: 2 }}
-          >
-            Iniciar Sesión
-          </Button>
-          <Button
-            variant="contained"
-            onClick={() => navigate('/login')}
-            sx={{
-              borderRadius: 2,
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              textTransform: 'none'
+    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <StyledAppBar position="sticky">
+        <Toolbar sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
+          <HomeIcon sx={{ color: '#667eea', mr: 2, fontSize: { xs: 28, md: 32 } }} />
+          <Typography 
+            variant="h6" 
+            sx={{ 
+              flexGrow: 1, 
+              color: '#333', 
+              fontWeight: 700,
+              fontSize: { xs: '1.1rem', md: '1.25rem' }
             }}
           >
-            Panel Admin
-          </Button>
+            ServiHome
+          </Typography>
+          <Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 1 }}>
+            <Button
+              variant="outlined"
+              onClick={() => navigate('/login')}
+              sx={{ 
+                borderRadius: 2,
+                textTransform: 'none',
+                fontSize: { xs: '0.875rem', md: '1rem' }
+              }}
+            >
+              Iniciar Sesión
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => navigate('/login')}
+              sx={{
+                borderRadius: 2,
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                textTransform: 'none',
+                fontSize: { xs: '0.875rem', md: '1rem' }
+              }}
+            >
+              Panel Admin
+            </Button>
+          </Box>
+          <IconButton
+            sx={{ display: { xs: 'block', sm: 'none' }, color: '#667eea' }}
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            <MenuIcon />
+          </IconButton>
         </Toolbar>
-      </AppBar>
+        {mobileMenuOpen && (
+          <Box sx={{ display: { xs: 'block', sm: 'none' }, p: 2, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
+            <Stack spacing={1}>
+              <Button
+                fullWidth
+                variant="outlined"
+                onClick={() => {
+                  navigate('/login');
+                  setMobileMenuOpen(false);
+                }}
+                sx={{ borderRadius: 2, textTransform: 'none' }}
+              >
+                Iniciar Sesión
+              </Button>
+              <Button
+                fullWidth
+                variant="contained"
+                onClick={() => {
+                  navigate('/login');
+                  setMobileMenuOpen(false);
+                }}
+                sx={{
+                  borderRadius: 2,
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  textTransform: 'none'
+                }}
+              >
+                Panel Admin
+              </Button>
+            </Stack>
+          </Box>
+        )}
+      </StyledAppBar>
 
       <GradientBox>
-        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
+        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, px: { xs: 2, sm: 3 } }}>
           <Grid container spacing={4} alignItems="center">
             <Grid item xs={12} md={6}>
               <Typography
-                variant={isMobile ? 'h3' : 'h2'}
+                variant={isMobile ? 'h3' : isTablet ? 'h2' : 'h1'}
                 component="h1"
                 sx={{
                   fontWeight: 800,
-                  mb: 3,
-                  lineHeight: 1.2
+                  mb: { xs: 2, md: 3 },
+                  lineHeight: 1.2,
+                  fontSize: { xs: '2rem', sm: '2.5rem', md: '3.5rem', lg: '4rem' }
                 }}
               >
                 Servicios Técnicos
@@ -173,11 +247,23 @@ export default function Landing() {
                 </Box>
                 {' '}para tu Hogar
               </Typography>
-              <Typography variant="h6" sx={{ mb: 4, opacity: 0.9, lineHeight: 1.6 }}>
+              <Typography 
+                variant={isMobile ? 'body1' : 'h6'} 
+                sx={{ 
+                  mb: { xs: 3, md: 4 }, 
+                  opacity: 0.95,
+                  lineHeight: 1.7,
+                  fontSize: { xs: '1rem', md: '1.25rem' }
+                }}
+              >
                 Conecta con técnicos verificados. Solicita servicios, recibe cotizaciones
                 transparentes y paga de forma segura. Todo desde tu móvil.
               </Typography>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 4 }}>
+              <Stack 
+                direction={{ xs: 'column', sm: 'row' }} 
+                spacing={2}
+                sx={{ mb: { xs: 3, md: 4 } }}
+              >
                 <DownloadButton
                   variant="contained"
                   startIcon={<PhoneIcon />}
@@ -186,11 +272,11 @@ export default function Landing() {
                     background: 'white',
                     color: '#667eea',
                     '&:hover': {
-                      background: 'rgba(255,255,255,0.9)',
+                      background: 'rgba(255,255,255,0.95)',
                     }
                   }}
                 >
-                  Descargar Android
+                  {isMobile ? 'Android' : 'Descargar Android'}
                 </DownloadButton>
                 <DownloadButton
                   variant="contained"
@@ -200,58 +286,55 @@ export default function Landing() {
                     background: 'white',
                     color: '#667eea',
                     '&:hover': {
-                      background: 'rgba(255,255,255,0.9)',
+                      background: 'rgba(255,255,255,0.95)',
                     }
                   }}
                 >
-                  Descargar iOS
+                  {isMobile ? 'iOS' : 'Descargar iOS'}
                 </DownloadButton>
-              </Box>
-              <Button
+              </Stack>
+              <DownloadButton
                 variant="outlined"
-                size="large"
+                size={isMobile ? 'medium' : 'large'}
                 startIcon={<DownloadIcon />}
                 onClick={handleInstallPWA}
                 sx={{
                   borderColor: 'white',
                   color: 'white',
                   borderRadius: 2,
-                  px: 4,
-                  py: 1.5,
+                  px: { xs: 3, md: 4 },
+                  py: { xs: 1.25, md: 1.5 },
                   '&:hover': {
                     borderColor: 'white',
-                    background: 'rgba(255,255,255,0.1)',
+                    background: 'rgba(255,255,255,0.15)',
                   }
                 }}
               >
-                Instalar App Web (PWA)
-              </Button>
+                {isMobile ? 'Instalar App Web' : 'Instalar App Web (PWA)'}
+              </DownloadButton>
             </Grid>
             <Grid item xs={12} md={6}>
               <Box
                 sx={{
                   textAlign: 'center',
-                  '& img': {
-                    maxWidth: '100%',
-                    height: 'auto',
-                    filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.3))',
-                  }
+                  mt: { xs: 4, md: 0 }
                 }}
               >
                 <Box
                   sx={{
                     width: '100%',
-                    height: 500,
-                    background: 'rgba(255,255,255,0.1)',
+                    height: { xs: 300, sm: 400, md: 500 },
+                    background: 'rgba(255,255,255,0.15)',
                     borderRadius: 4,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    backdropFilter: 'blur(10px)',
-                    border: '2px solid rgba(255,255,255,0.2)',
+                    backdropFilter: 'blur(20px)',
+                    border: '2px solid rgba(255,255,255,0.3)',
+                    boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
                   }}
                 >
-                  <PhoneIcon sx={{ fontSize: 200, opacity: 0.3 }} />
+                  <PhoneIcon sx={{ fontSize: { xs: 120, md: 200 }, opacity: 0.4 }} />
                 </Box>
               </Box>
             </Grid>
@@ -259,25 +342,59 @@ export default function Landing() {
         </Container>
       </GradientBox>
 
-      <Container maxWidth="lg" sx={{ py: 8 }}>
-        <Typography variant="h3" align="center" sx={{ fontWeight: 700, mb: 2 }}>
-          ¿Por qué elegir ServiHome?
-        </Typography>
-        <Typography variant="h6" align="center" color="text.secondary" sx={{ mb: 6 }}>
-          La plataforma más confiable para servicios técnicos del hogar
-        </Typography>
+      <Container maxWidth="lg" sx={{ py: { xs: 6, md: 10 }, px: { xs: 2, sm: 3 } }}>
+        <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 6 } }}>
+          <Typography 
+            variant={isMobile ? 'h4' : 'h3'} 
+            sx={{ 
+              fontWeight: 700, 
+              mb: { xs: 1, md: 2 },
+              fontSize: { xs: '1.75rem', sm: '2.25rem', md: '2.75rem' }
+            }}
+          >
+            ¿Por qué elegir ServiHome?
+          </Typography>
+          <Typography 
+            variant={isMobile ? 'body1' : 'h6'} 
+            color="text.secondary" 
+            sx={{
+              fontSize: { xs: '0.95rem', md: '1.25rem' },
+              maxWidth: 600,
+              mx: 'auto'
+            }}
+          >
+            La plataforma más confiable para servicios técnicos del hogar
+          </Typography>
+        </Box>
 
-        <Grid container spacing={4}>
+        <Grid container spacing={{ xs: 3, md: 4 }}>
           {features.map((feature, index) => (
             <Grid item xs={12} sm={6} md={3} key={index}>
               <FeatureCard>
                 <Box sx={{ mb: 2, textAlign: 'center' }}>
                   {feature.icon}
                 </Box>
-                <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, textAlign: 'center' }}>
+                <Typography 
+                  variant={isMobile ? 'h6' : 'h5'} 
+                  gutterBottom 
+                  sx={{ 
+                    fontWeight: 600, 
+                    textAlign: 'center',
+                    mb: 1.5,
+                    fontSize: { xs: '1.1rem', md: '1.25rem' }
+                  }}
+                >
                   {feature.title}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" align="center">
+                <Typography 
+                  variant="body2" 
+                  color="text.secondary" 
+                  align="center"
+                  sx={{
+                    lineHeight: 1.7,
+                    fontSize: { xs: '0.875rem', md: '0.95rem' }
+                  }}
+                >
                   {feature.description}
                 </Typography>
               </FeatureCard>
@@ -286,18 +403,33 @@ export default function Landing() {
         </Grid>
       </Container>
 
-      <Box sx={{ background: '#f5f7fa', py: 8 }}>
-        <Container maxWidth="lg">
-          <Grid container spacing={4} alignItems="center">
+      <Box sx={{ background: '#f5f7fa', py: { xs: 6, md: 10 } }}>
+        <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3 } }}>
+          <Grid container spacing={{ xs: 4, md: 6 }} alignItems="center">
             <Grid item xs={12} md={6}>
-              <Typography variant="h3" sx={{ fontWeight: 700, mb: 3 }}>
+              <Typography 
+                variant={isMobile ? 'h4' : 'h3'} 
+                sx={{ 
+                  fontWeight: 700, 
+                  mb: { xs: 2, md: 3 },
+                  fontSize: { xs: '1.75rem', md: '2.5rem' }
+                }}
+              >
                 Descarga la App
               </Typography>
-              <Typography variant="h6" color="text.secondary" sx={{ mb: 4 }}>
+              <Typography 
+                variant={isMobile ? 'body1' : 'h6'} 
+                color="text.secondary" 
+                sx={{ 
+                  mb: { xs: 3, md: 4 },
+                  lineHeight: 1.7,
+                  fontSize: { xs: '0.95rem', md: '1.15rem' }
+                }}
+              >
                 Disponible para Android e iOS. También puedes instalarla como app web
                 para acceso rápido desde tu navegador.
               </Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Stack spacing={2} sx={{ maxWidth: { xs: '100%', md: 400 } }}>
                 <DownloadButton
                   variant="contained"
                   size="large"
@@ -342,29 +474,43 @@ export default function Landing() {
                 >
                   Instalar App Web (PWA)
                 </DownloadButton>
-              </Box>
+              </Stack>
             </Grid>
             <Grid item xs={12} md={6}>
               <Box
                 sx={{
                   display: 'flex',
                   justifyContent: 'center',
-                  gap: 2,
+                  gap: { xs: 2, md: 3 },
                   flexWrap: 'wrap'
                 }}
               >
-                <Card sx={{ width: 200, borderRadius: 3, p: 2, textAlign: 'center' }}>
-                  <PhoneIcon sx={{ fontSize: 80, color: '#667eea', mb: 2 }} />
-                  <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                <Card sx={{ 
+                  width: { xs: '100%', sm: 200 }, 
+                  borderRadius: 3, 
+                  p: { xs: 2, md: 3 }, 
+                  textAlign: 'center',
+                  transition: 'transform 0.3s',
+                  '&:hover': { transform: 'scale(1.05)' }
+                }}>
+                  <PhoneIcon sx={{ fontSize: { xs: 60, md: 80 }, color: '#667eea', mb: 2 }} />
+                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
                     Android
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     Disponible en Google Play
                   </Typography>
                 </Card>
-                <Card sx={{ width: 200, borderRadius: 3, p: 2, textAlign: 'center' }}>
-                  <AppleIcon sx={{ fontSize: 80, color: '#667eea', mb: 2 }} />
-                  <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                <Card sx={{ 
+                  width: { xs: '100%', sm: 200 }, 
+                  borderRadius: 3, 
+                  p: { xs: 2, md: 3 }, 
+                  textAlign: 'center',
+                  transition: 'transform 0.3s',
+                  '&:hover': { transform: 'scale(1.05)' }
+                }}>
+                  <AppleIcon sx={{ fontSize: { xs: 60, md: 80 }, color: '#667eea', mb: 2 }} />
+                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
                     iOS
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
@@ -377,12 +523,32 @@ export default function Landing() {
         </Container>
       </Box>
 
-      <Box sx={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', py: 6 }}>
-        <Container maxWidth="lg" align="center">
-          <Typography variant="h4" sx={{ fontWeight: 700, mb: 2 }}>
+      <Box sx={{ 
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 
+        color: 'white', 
+        py: { xs: 6, md: 8 } 
+      }}>
+        <Container maxWidth="lg" align="center" sx={{ px: { xs: 2, sm: 3 } }}>
+          <Typography 
+            variant={isMobile ? 'h4' : 'h3'} 
+            sx={{ 
+              fontWeight: 700, 
+              mb: { xs: 2, md: 3 },
+              fontSize: { xs: '1.75rem', md: '2.5rem' }
+            }}
+          >
             ¿Listo para comenzar?
           </Typography>
-          <Typography variant="h6" sx={{ mb: 4, opacity: 0.9 }}>
+          <Typography 
+            variant={isMobile ? 'body1' : 'h6'} 
+            sx={{ 
+              mb: { xs: 3, md: 4 }, 
+              opacity: 0.95,
+              fontSize: { xs: '1rem', md: '1.25rem' },
+              maxWidth: 600,
+              mx: 'auto'
+            }}
+          >
             Descarga la app ahora y comienza a solicitar servicios
           </Typography>
           <Button
@@ -393,14 +559,14 @@ export default function Landing() {
             sx={{
               background: 'white',
               color: '#667eea',
-              px: 4,
-              py: 1.5,
+              px: { xs: 4, md: 6 },
+              py: { xs: 1.5, md: 2 },
               borderRadius: 2,
               textTransform: 'none',
-              fontSize: '1.1rem',
+              fontSize: { xs: '1rem', md: '1.1rem' },
               fontWeight: 600,
               '&:hover': {
-                background: 'rgba(255,255,255,0.9)',
+                background: 'rgba(255,255,255,0.95)',
               }
             }}
           >
@@ -409,8 +575,12 @@ export default function Landing() {
         </Container>
       </Box>
 
-      <Box sx={{ py: 4, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
-        <Container maxWidth="lg">
+      <Box sx={{ 
+        py: { xs: 3, md: 4 }, 
+        borderTop: '1px solid rgba(0,0,0,0.08)',
+        background: '#fafafa'
+      }}>
+        <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3 } }}>
           <Typography variant="body2" color="text.secondary" align="center">
             © 2025 ServiHome. Todos los derechos reservados.
           </Typography>
@@ -419,4 +589,3 @@ export default function Landing() {
     </Box>
   );
 }
-
