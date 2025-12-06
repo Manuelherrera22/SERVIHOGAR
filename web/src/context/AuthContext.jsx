@@ -32,7 +32,8 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       // Check if we're in demo mode
-      const isDemoMode = api.defaults.baseURL.includes('/demo');
+      const isDemoMode = api.defaults.baseURL.includes('/demo') || 
+                        api.defaults.baseURL.includes('/.netlify/functions/demo');
       const endpoint = isDemoMode ? '/login' : '/auth/login';
       const response = await api.post(endpoint, { email, password });
       const { token, user } = response.data;

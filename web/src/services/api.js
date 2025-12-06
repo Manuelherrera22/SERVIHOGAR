@@ -17,11 +17,16 @@ const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === 'true' && !isProduction;
 let baseURL;
 
 if (isProduction) {
-  // En producción, SIEMPRE requiere VITE_API_URL
-  if (!API_URL) {
+  // En producción, verificar si está en modo demo
+  const isDemoMode = import.meta.env.VITE_DEMO_MODE === 'true';
+  
+  if (isDemoMode) {
+    // Modo demo en producción: usar Netlify Functions
+    baseURL = '/.netlify/functions/demo';
+  } else if (!API_URL) {
     console.error('❌ ERROR: VITE_API_URL no está configurada en Netlify.');
     console.error('Por favor configura la variable de entorno VITE_API_URL con la URL de tu backend.');
-    console.error('Ejemplo: https://tu-backend.herokuapp.com/api');
+    console.error('O configura VITE_DEMO_MODE=true para usar el modo demo.');
     // Usar un valor que falle claramente para que el usuario sepa que debe configurar
     baseURL = 'https://CONFIGURE_VITE_API_URL_IN_NETLIFY/api';
   } else {

@@ -12,10 +12,26 @@ export default function BackendStatus() {
   const checkBackend = async () => {
     const apiURL = api.defaults.baseURL;
     const isProduction = window.location.hostname !== 'localhost' && !window.location.hostname.includes('127.0.0.1');
+    const isDemoMode = import.meta.env.VITE_DEMO_MODE === 'true';
     
     // Verificar si necesita configuración
-    if (isProduction && (apiURL.includes('CONFIGURE_VITE_API_URL') || !apiURL || apiURL === '/api/demo')) {
+    if (isProduction && !isDemoMode && (apiURL.includes('CONFIGURE_VITE_API_URL') || !apiURL)) {
       setStatus({ checking: false, available: false, needsConfig: true });
+      return;
+    }
+
+    // Si está en modo demo, verificar que las funciones estén disponibles
+    if (isDemoMode && isProduction) {
+      try {
+        const response = await api.get('/health').catch(() => null);
+        if (response && response.status === 200) {
+          setStatus({ checking: false, available: true, needsConfig: false });
+        } else {
+          setStatus({ checking: false, available: false, needsConfig: false });
+        }
+      } catch (error) {
+        setStatus({ checking: false, available: false, needsConfig: false });
+      }
       return;
     }
 
