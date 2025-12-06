@@ -1,4 +1,12 @@
 import axios from 'axios';
+import { 
+  demoServices, 
+  demoTechnicians, 
+  demoPayments 
+} from '../utils/demoData';
+
+// Modo demo: funciona completamente sin backend
+const USE_DEMO_MODE = true; // Cambiar a false cuando tengas backend
 
 // Detectar si estamos en producción
 const isProduction = import.meta.env.MODE === 'production' || 
@@ -6,34 +14,24 @@ const isProduction = import.meta.env.MODE === 'production' ||
                      (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && !window.location.hostname.includes('127.0.0.1'));
 
 // Get API URL from environment variables
-// En producción, VITE_API_URL DEBE estar configurada en Netlify
 const API_URL = import.meta.env.VITE_API_URL;
-
-// Determinar modo demo
-// Solo activo en desarrollo o si explícitamente se configura
-const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === 'true' && !isProduction;
 
 // Construir baseURL
 let baseURL;
 
-if (isProduction) {
-  // En producción, si no hay VITE_API_URL, usar backend simple por defecto
+if (USE_DEMO_MODE) {
+  // Modo demo: no usar backend real
+  baseURL = '/api/demo';
+} else if (isProduction) {
   if (!API_URL) {
-    // Backend simple por defecto - puedes desplegarlo en Render, Railway, etc.
-    // Por ahora, intentar usar un backend demo público o mostrar instrucciones
-    console.warn('⚠️ VITE_API_URL no configurada. Usando modo demo.');
-    console.warn('💡 Para funcionalidad completa, despliega backend-simple/ y configura VITE_API_URL');
-    // Intentar usar backend simple si está desplegado, sino mostrar error claro
-    baseURL = 'https://CONFIGURE_BACKEND_URL/api';
+    console.error('❌ ERROR: VITE_API_URL no está configurada en Netlify.');
+    baseURL = 'https://CONFIGURE_VITE_API_URL_IN_NETLIFY/api';
   } else {
-    // En producción con URL configurada, usar esa URL
     baseURL = API_URL;
   }
 } else {
-  // En desarrollo
-  if (DEMO_MODE) {
-    baseURL = 'http://localhost:5000/api/demo';
-  } else if (API_URL) {
+  // Desarrollo
+  if (API_URL) {
     baseURL = API_URL;
   } else {
     baseURL = 'http://localhost:5000/api';
@@ -47,43 +45,96 @@ const api = axios.create({
   }
 });
 
-// Interceptor para mostrar errores más claros
-api.interceptors.request.use(
-  (config) => {
-    if (config.baseURL.includes('CONFIGURE_VITE_API_URL')) {
-      console.error('❌ No se puede hacer la petición: VITE_API_URL no está configurada');
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+// Interceptor para modo demo - simular respuestas
+if (USE_DEMO_MODE) {
+  // Interceptar todas las peticiones y devolver datos demo
+  api.interceptors.request.use((config) => {
+    // Simular delay de red
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(config), 100);
+    });
+  });
 
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.config?.baseURL?.includes('CONFIGURE_VITE_API_URL')) {
-      error.message = 'VITE_API_URL no está configurada en Netlify. Por favor configura la variable de entorno.';
-    } else if (error.code === 'ERR_NETWORK' || error.message.includes('Failed to fetch')) {
-      if (isProduction && !API_URL) {
-        error.message = 'Backend no disponible. Configura VITE_API_URL en Netlify.';
+  api.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+      const { method, url } = error.config || {};
+
+      // Simular respuestas demo
+      if (method === 'get') {
+        if (url.includes('/services') || url === '/api/demo/services') {
+          return Promise.resolve({
+            data: { services: demoServices },
+            status: 200,
+            statusText: 'OK',
+            headers: {},
+            config: error.config
+          });
+        }
+        if (url.includes('/users/technicians') || url === '/api/demo/users/technicians') {
+          return Promise.resolve({
+            data: { technicians: demoTechnicians },
+            status: 200,
+            statusText: 'OK',
+            headers: {},
+            config: error.config
+          });
+        }
+        if (url.includes('/payments') || url === '/api/demo/payments') {
+          return Promise.resolve({
+            data: { payments: demoPayments },
+            status: 200,
+            statusText: 'OK',
+            headers: {},
+            config: error.config
+          });
+        }
+        if (url.includes('/health') || url === '/api/demo/health') {
+          return Promise.resolve({
+            data: { status: 'ok', mode: 'demo' },
+            status: 200,
+            statusText: 'OK',
+            headers: {},
+            config: error.config
+          });
+        }
       }
+
+      if (method === 'post') {
+        if (url.includes('/login') || url === '/api/demo/login') {
+          const { email, password } = JSON.parse(error.config.data || '{}');
+          const token = `demo-token-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+          const user = {
+            _id: 'demo-user-1',
+            name: email.split('@')[0] || 'Usuario',
+            email: email,
+            role: 'admin',
+            isActive: true
+          };
+          return Promise.resolve({
+            data: { token, user },
+            status: 200,
+            statusText: 'OK',
+            headers: {},
+            config: error.config
+          });
+        }
+      }
+
+      return Promise.reject(error);
     }
-    return Promise.reject(error);
-  }
-);
+  );
+}
 
 // Log para debugging
-if (!isProduction && DEMO_MODE) {
-  console.log('🎮 Modo Demo activado - Puedes usar cualquier email/contraseña');
-  console.log('📍 API URL:', baseURL);
+if (USE_DEMO_MODE) {
+  console.log('🎮 Modo Demo activado - Funciona completamente sin backend');
+  console.log('✅ Acepta cualquier email/contraseña para login');
 } else if (isProduction) {
   if (API_URL) {
     console.log('🌐 Producción - API URL:', baseURL);
   } else {
     console.error('❌ PRODUCCIÓN SIN API URL CONFIGURADA');
-    console.error('Configura VITE_API_URL en Netlify → Site settings → Environment variables');
   }
 } else {
   console.log('🔧 Desarrollo - API URL:', baseURL);
