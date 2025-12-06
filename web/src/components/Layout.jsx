@@ -49,10 +49,10 @@ const LogoBox = styled(Box)(({ theme }) => ({
 }));
 
 const menuItems = [
-  { text: 'Dashboard', icon: <DashboardIcon />, path: '/' },
-  { text: 'Servicios', icon: <BuildIcon />, path: '/services' },
-  { text: 'Usuarios', icon: <PeopleIcon />, path: '/users' },
-  { text: 'Pagos', icon: <PaymentIcon />, path: '/payments' }
+  { text: 'Dashboard', icon: <DashboardIcon />, path: '/admin' },
+  { text: 'Servicios', icon: <BuildIcon />, path: '/admin/services' },
+  { text: 'Usuarios', icon: <PeopleIcon />, path: '/admin/users' },
+  { text: 'Pagos', icon: <PaymentIcon />, path: '/admin/payments' }
 ];
 
 export default function Layout() {
@@ -198,10 +198,10 @@ export default function Layout() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1, fontWeight: 600 }}>
-            {location.pathname === '/' ? 'Dashboard' : 
-             location.pathname === '/services' ? 'Servicios' :
-             location.pathname === '/users' ? 'Usuarios' :
-             location.pathname === '/payments' ? 'Pagos' : 'ServiHome'}
+            {location.pathname === '/admin' ? 'Dashboard' : 
+             location.pathname === '/admin/services' ? 'Servicios' :
+             location.pathname === '/admin/users' ? 'Usuarios' :
+             location.pathname === '/admin/payments' ? 'Pagos' : 'ServiHome'}
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Typography variant="body2" sx={{ display: { xs: 'none', sm: 'block' } }}>

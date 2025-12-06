@@ -1,0 +1,18 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#grad)" rx="100"/>
+  <g fill="white">
+    <!-- Techo -->
+    <path d="M256 150 L150 220 L362 220 Z"/>
+    <!-- Casa -->
+    <rect x="150" y="220" width="212" height="180" rx="10"/>
+    <!-- Puerta -->
+    <rect x="230" y="300" width="52" height="100" rx="5" fill="#667eea"/>
+  </g>
+</svg>
+

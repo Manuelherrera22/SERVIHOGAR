@@ -2,13 +2,45 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/png" href="/icon-192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ServiHome - Administración</title>
+    <meta name="description" content="ServiHome - Plataforma para conectar usuarios con técnicos confiables para servicios del hogar" />
+    <meta name="theme-color" content="#667eea" />
+    
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="ServiHome" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
+    
+    <title>ServiHome - Servicios Técnicos Confiables</title>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      // Registrar Service Worker para PWA
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+              console.log('SW registrado:', registration);
+            })
+            .catch((error) => {
+              console.log('Error registrando SW:', error);
+            });
+        });
+
+        // Manejar prompt de instalación
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+          e.preventDefault();
+          deferredPrompt = e;
+          window.deferredPrompt = e;
+        });
+      }
+    </script>
   </body>
 </html>
 
