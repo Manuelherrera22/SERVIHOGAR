@@ -26,7 +26,9 @@ export default defineConfig({
           mui: ['@mui/material', '@mui/icons-material']
         }
       }
-    }
+    },
+    // Asegurar que los archivos de public se copien
+    copyPublicDir: true
   },
   publicDir: 'public',
   define: {
