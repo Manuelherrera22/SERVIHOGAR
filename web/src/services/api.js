@@ -17,13 +17,14 @@ const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === 'true' && !isProduction;
 let baseURL;
 
 if (isProduction) {
-  // En producción, requiere VITE_API_URL configurada
+  // En producción, si no hay VITE_API_URL, usar backend simple por defecto
   if (!API_URL) {
-    console.error('❌ ERROR: VITE_API_URL no está configurada en Netlify.');
-    console.error('Por favor configura la variable de entorno VITE_API_URL con la URL de tu backend.');
-    console.error('Ejemplo: https://servihome-api.onrender.com/api');
-    // Usar un valor que falle claramente para que el usuario sepa que debe configurar
-    baseURL = 'https://CONFIGURE_VITE_API_URL_IN_NETLIFY/api';
+    // Backend simple por defecto - puedes desplegarlo en Render, Railway, etc.
+    // Por ahora, intentar usar un backend demo público o mostrar instrucciones
+    console.warn('⚠️ VITE_API_URL no configurada. Usando modo demo.');
+    console.warn('💡 Para funcionalidad completa, despliega backend-simple/ y configura VITE_API_URL');
+    // Intentar usar backend simple si está desplegado, sino mostrar error claro
+    baseURL = 'https://CONFIGURE_BACKEND_URL/api';
   } else {
     // En producción con URL configurada, usar esa URL
     baseURL = API_URL;

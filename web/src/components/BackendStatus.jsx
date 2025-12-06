@@ -52,26 +52,31 @@ export default function BackendStatus() {
 
   if (status.needsConfig) {
     return (
-      <Alert severity="error" sx={{ mb: 2 }}>
-        <AlertTitle>Configuración Requerida</AlertTitle>
+      <Alert severity="info" sx={{ mb: 2 }}>
+        <AlertTitle>Backend Simple Disponible</AlertTitle>
         <Box>
-          <strong>VITE_API_URL</strong> no está configurada en Netlify.
+          <strong>Opción 1: Desplegar Backend Simple (Recomendado)</strong>
           <br />
-          <br />
-          <strong>Pasos para configurar:</strong>
+          El proyecto incluye un backend simple en <code>backend-simple/</code> que:
+          <ul style={{ marginTop: 8, marginBottom: 8, paddingLeft: 20 }}>
+            <li>✅ No requiere base de datos</li>
+            <li>✅ Acepta cualquier email/contraseña</li>
+            <li>✅ Fácil de desplegar en Render.com (gratis)</li>
+          </ul>
+          <strong>Pasos:</strong>
           <ol style={{ marginTop: 8, marginBottom: 8, paddingLeft: 20 }}>
-            <li>Ve a Netlify → <strong>Site settings</strong> → <strong>Environment variables</strong></li>
+            <li>Despliega <code>backend-simple/</code> en Render.com (ver <code>backend-simple/DEPLOY.md</code>)</li>
+            <li>En Netlify → <strong>Site settings</strong> → <strong>Environment variables</strong></li>
             <li>Agrega: <code>VITE_API_URL</code> = <code>https://tu-backend-url/api</code></li>
-            <li>Agrega: <code>VITE_DEMO_MODE</code> = <code>false</code></li>
             <li>Haz un nuevo deploy</li>
           </ol>
           <Link 
-            href="https://docs.netlify.com/environment-variables/overview/" 
+            href="https://github.com/Manuelherrera22/SERVIHOGAR/blob/main/backend-simple/DEPLOY.md" 
             target="_blank" 
             rel="noopener"
-            sx={{ fontSize: '0.875rem' }}
+            sx={{ fontSize: '0.875rem', mr: 2 }}
           >
-            Ver documentación de Netlify
+            Ver guía de despliegue
           </Link>
         </Box>
       </Alert>

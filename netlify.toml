@@ -6,6 +6,9 @@
 
 [build.environment]
   NODE_VERSION = "18"
+  # Backend simple - Acepta cualquier email/contraseña
+  # Si quieres usar tu propio backend, configura VITE_API_URL en Netlify dashboard
+  # VITE_DEMO_MODE = "false"
 
 # Redirecciones para SPA - TODAS las rutas van a index.html
 [[redirects]]
