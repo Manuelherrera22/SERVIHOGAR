@@ -14,6 +14,20 @@ export default defineConfig({
       }
     }
   },
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    sourcemap: false,
+    minify: 'esbuild', // Usa esbuild que viene con Vite (más rápido)
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          mui: ['@mui/material', '@mui/icons-material']
+        }
+      }
+    }
+  },
   define: {
     'process.env': {}
   }
