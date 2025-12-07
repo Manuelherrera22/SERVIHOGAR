@@ -24,7 +24,11 @@ export default defineConfig({
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router-dom'],
           mui: ['@mui/material', '@mui/icons-material']
-        }
+        },
+        // Asegurar que los nombres de archivo sean consistentes
+        assetFileNames: 'assets/[name].[ext]',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js'
       }
     },
     // Asegurar que los archivos de public se copien

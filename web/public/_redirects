@@ -1,1 +1,15 @@
+# Assets estáticos - no redirigir
+/assets/*    /assets/:splat    200
+/*.js        /:splat.js        200
+/*.css       /:splat.css       200
+/*.json      /:splat.json      200
+/*.png       /:splat.png       200
+/*.jpg       /:splat.jpg       200
+/*.svg       /:splat.svg       200
+/*.ico       /:splat.ico       200
+/*.woff      /:splat.woff      200
+/*.woff2     /:splat.woff2     200
+/*.ttf       /:splat.ttf       200
+
+# SPA - redirigir todo lo demás a index.html
 /*    /index.html   200
